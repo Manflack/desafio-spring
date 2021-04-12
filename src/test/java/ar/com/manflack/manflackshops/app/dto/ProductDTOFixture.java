@@ -20,4 +20,14 @@ public class ProductDTOFixture
     {
         return new ProductDTO(2, "Shoes", "Clothes", "Adidas", 200, 5, true, prestige);
     }
+
+    public static ProductDTO withDefaults3()
+    {
+        return new ProductDTO(3, "CPU", "Electronics", "Intel", 2000, 10, true, prestige);
+    }
+
+    public static ProductDTO withDefaults4()
+    {
+        return new ProductDTO(4, "Motherboard", "Electronics", "ASUS", 1000, 1, true, "****");
+    }
 }

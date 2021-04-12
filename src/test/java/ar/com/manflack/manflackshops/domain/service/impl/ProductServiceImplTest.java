@@ -38,15 +38,17 @@ public class ProductServiceImplTest
     @Test
     public void getAll_OK() throws NotImplementedFilterOrder, ManyFiltersException
     {
-        List<ProductDTO> productLists =
-                Arrays.asList(ProductDTOFixture.withDefaults1(), ProductDTOFixture.withDefaults2());
+        List<ProductDTO> productLists = Arrays.asList(ProductDTOFixture.withDefaults1(),
+                ProductDTOFixture.withDefaults2(),
+                ProductDTOFixture.withDefaults3(),
+                ProductDTOFixture.withDefaults4());
 
         when(repository.getAll()).thenReturn(productLists);
         when(utilities.filterProducts(any(), any())).thenReturn(productLists.stream());
 
         List<ProductDTO> response = service.getAllProducts(new ProductFilter());
-
+        // el profe brian (alias el brashan)
         assertNotNull(response);
-        assertEquals(2, response.size());
+        assertEquals(4, response.size());
     }
 }
