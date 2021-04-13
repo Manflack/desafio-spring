@@ -38,16 +38,39 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/*
+    Declare the class with Mockito runner, instead of being initialized
+    entirely by spring, Mockito and his magic will initialize the application
+    The EnableWebMvc i understand that enable the view controller response, idk, magic
+ */
 @RunWith(MockitoJUnitRunner.class)
 @EnableWebMvc
 public class ProductControllerTest
 {
+    /*
+        Important! Read first what does the annotation mock before this explanation.
+
+        The InjectMocks annotation Inject the "false" dependencies declared with
+        @Mock annotation, to the class to Inject, in this case, the controller.
+        This annotation only we'll use it to the class TO test.
+     */
     @InjectMocks
     ProductController productController;
 
+    /*
+        The @Mock annotation inject a false dependency. This it's orchestrated by
+        a Mockito "container", that supervise all the method's call to the class/dependency.
+        Why is supervised? Because when we use the mockito static method 'when.thenReturn',
+        Mockito detect this call to his dependency and will return the defined object
+     */
     @Mock
     ProductServiceImpl service;
 
+    /*
+        In this case, I use @Mock again, because my controller call a class called 'UtilitiesComponent',
+        if I not declare this class with @Mock, my test will throw a NullPointerException, because my
+        class it's null.
+     */
     @Mock
     UtilitiesComponent utilities;
 
@@ -55,19 +78,28 @@ public class ProductControllerTest
 
     private ObjectMapper mapper;
 
+    /*
+        The @Before annotation means that the method setup, will be executed BEFORE
+        anything, its mean, before calls @Test methods
+     */
     @Before
     public void setup()
     {
+        // Register the controller instance to the Mvc calls
         mvc = MockMvcBuilders.standaloneSetup(productController)
                 //.setControllerAdvice(new RestExceptionHandler())
                 .build();
 
+        // Magic to transform object expressed in String arrays to Object Arrays
         mapper = new ObjectMapper().findAndRegisterModules()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
+    /*
+    
+     */
     @Test
     public void getAll_OK() throws Exception
     {
