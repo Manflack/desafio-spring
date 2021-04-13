@@ -68,7 +68,7 @@ public class ProductControllerTest
     /*
         In this case, I use @Mock again, because my controller call a class called 'UtilitiesComponent',
         if I not declare this class with @Mock, my test will throw a NullPointerException, because my
-        class it's null.
+        class instance it's null.
      */
     @Mock
     UtilitiesComponent utilities;
@@ -135,7 +135,6 @@ public class ProductControllerTest
         // for convention, we put STATIC values in the expected argument,
         // and the "variables/responses" in the ACTUAL
         assertEquals(4, listResponse.size());
-
 
         // we assert that the service, was called 1 times,
         // and was the method getProductFilter given ANY parameters
