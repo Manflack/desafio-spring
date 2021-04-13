@@ -7,15 +7,14 @@ import ar.com.manflack.manflackshops.app.dto.ProductDTO;
 import ar.com.manflack.manflackshops.app.dto.ProductDTOFixture;
 import ar.com.manflack.manflackshops.domain.UtilitiesComponent;
 import ar.com.manflack.manflackshops.domain.service.impl.ProductServiceImpl;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -98,18 +97,26 @@ public class ProductControllerTest
     }
 
     /*
-    
+        After the class instance was intialized, Mockito runs all the
+        method that are VOID and have the annotation @Test
      */
     @Test
     public void getAll_OK() throws Exception
     {
+        // Create an arraylist that contain 4 products
         List<ProductDTO> productLists = Arrays.asList(ProductDTOFixture.withDefaults1(),
                 ProductDTOFixture.withDefaults2(),
                 ProductDTOFixture.withDefaults3(),
                 ProductDTOFixture.withDefaults4());
 
+        // When the controller is executed, in this sentence
+        // we says "when the service.method is executed with ANY
+        // type of argument, then return my product list declared above
         when(service.getAllProducts(any())).thenReturn(productLists);
 
+        // In this sentence, we simulate a call of kind "Postman", type
+        // GET, the URL, what content type is, and what we expect of the
+        // response
         MvcResult result = mvc.perform(get("/api/v1/articles").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -117,9 +124,22 @@ public class ProductControllerTest
         String response = result.getResponse().getContentAsString();
         assertNotNull(response);
 
+        // convert the response json string to an object array
         List<ProductDTO> listResponse = Arrays.asList(mapper.readValue(response, ProductDTO[].class));
 
+        // first assert the listResponse to verify that isn't null
+        // if is null, mockito throw an exception, instead we get a
+        // NullPointerException
         assertNotNull(listResponse);
+        // ATTENTION, the assert is component by EXPECTED, ACTUAL, DELTA
+        // for convention, we put STATIC values in the expected argument,
+        // and the "variables/responses" in the ACTUAL
         assertEquals(4, listResponse.size());
+
+
+        // we assert that the service, was called 1 times,
+        // and was the method getProductFilter given ANY parameters
+        verify(utilities, times(1)).getProductFilter(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(service, times(1)).getAllProducts(any());
     }
 }
